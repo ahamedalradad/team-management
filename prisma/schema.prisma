@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Team {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  profile    String   @default("images/team-profile/profile.jpg")
+  
+  members     User[]  @relation("TeamMembers")
+  tasks      Task[]   @relation("TeamTasks")
+  ownerId    Int      @unique
+  owner      User     @relation("TeamOwner", fields: [ownerId], references: [id])
+}
+
+model User {
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  name           String
+  password       String
+  role           String          @default("member") 
+  profile        String          @default("images/user-profile/profile.jpg")
+  skills         String?         @db.Text  
+  
+  teamId         Int?
+  team           Team?           @relation("TeamMembers", fields: [teamId], references: [id])
+  
+  myOwnTeam      Team?           @relation("TeamOwner")
+  
+  tasks          Task[]          @relation("UserTasks")
+  
+  verifications  Verification[]  @relation("UserVerification")
+  resetPasswords ResetPassword[] @relation("UserResetPassword")
+}
+
+model Verification {
+  id                Int      @id @default(autoincrement())
+  isAccountVerified Boolean  @default(false)
+  verificationToken Int?     @unique
+  userId            Int  
+  user              User     @relation("UserVerification", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ResetPassword {
+  id                 Int      @id @default(autoincrement())
+  allowed            Boolean  @default(false)
+  resetPasswordToken String   @unique
+  userId             Int
+  user               User     @relation("UserResetPassword", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id           Int      @id @default(autoincrement())
+  name         String 
+  description  String   @db.Text   
+  skillsRequired Json
+  active      Boolean
+  participateds User[]   @relation("UserTasks")
+  teamId Int
+  team Team   @relation("TeamTasks",fields: [teamId], references: [id]) 
+}
