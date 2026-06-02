@@ -15,6 +15,7 @@ model Team {
   tasks      Task[]   @relation("TeamTasks")
   ownerId    Int      @unique
   owner      User     @relation("TeamOwner", fields: [ownerId], references: [id])
+  invitations invitation[]
 }
 
 model User {
@@ -24,7 +25,7 @@ model User {
   password       String
   role           String          @default("member") 
   profile        String          @default("images/user-profile/profile.jpg")
-  skills         String?         @db.Text  
+  skills         Json 
   
   teamId         Int?
   team           Team?           @relation("TeamMembers", fields: [teamId], references: [id])
@@ -35,6 +36,8 @@ model User {
   
   verifications  Verification[]  @relation("UserVerification")
   resetPasswords ResetPassword[] @relation("UserResetPassword")
+
+  invitations invitation[]
 }
 
 model Verification {
@@ -54,12 +57,22 @@ model ResetPassword {
 }
 
 model Task {
-  id           Int      @id @default(autoincrement())
-  name         String 
-  description  String   @db.Text   
-  skillsRequired Json
-  active      Boolean
-  participateds User[]   @relation("UserTasks")
-  teamId Int
-  team Team   @relation("TeamTasks",fields: [teamId], references: [id]) 
+  id              Int      @id @default(autoincrement())
+  name            String 
+  description     String   @db.Text   
+  skillsRequired  Json
+  active          Boolean
+  participateds   User[]   @relation("UserTasks")
+  teamId          Int
+  team            Team     @relation("TeamTasks",fields: [teamId], references: [id]) 
+}
+
+model invitation {
+  id        Int      @id @default(autoincrement())   
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  invited   User     @relation(fields: [invitedId], references: [id], onDelete: Cascade)
+  invitedId Int      
+  teamId    Int 
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
 }

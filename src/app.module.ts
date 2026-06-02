@@ -7,8 +7,19 @@ import { UserModule } from "./users/user.module";
 import { TeamModule } from "./teams/team.module";
 import { TaskModule } from "./tasks/task.module";
 import { MemberModule } from "./members/member.module";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { InvitationModule } from "./invitations/invitation.module";
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
+
     JwtModule.register({
       global: true,
       signOptions: { expiresIn: "60d" },
@@ -21,6 +32,7 @@ import { MemberModule } from "./members/member.module";
     TeamModule,
     TaskModule,
     MemberModule,
+    InvitationModule,
   ],
 })
 export class AppModule {}
