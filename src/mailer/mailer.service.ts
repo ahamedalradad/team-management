@@ -1,38 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable } from "@nestjs/common";
+import { MailerService } from "@nestjs-modules/mailer";
 
 @Injectable()
 export class MailService {
   constructor(private readonly mailerService: MailerService) {}
-  sendLogin(email: string) {
+  async sendLogin(email: string) {
     const today = new Date();
-    this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: email,
-      from: "team managemet community",
-      subject: 'Log in',
+      from: `Team management <${process.env.EMAIL_USERNAME}>`,
+      subject: "Log in",
       html: `Hi , you logged in ${today}  if you didn't log change your ppassword`,
       context: { email, today },
     });
   }
-  sendEmailVerification(email: string, link: string, token: number) {
-    this.mailerService.sendMail({
+  async sendEmailVerification(email: string, link: string, token: number) {
+    await this.mailerService.sendMail({
       to: email,
-      from: "team managemet community",
-      subject: 'verify token',
+      from: `Team management <${process.env.EMAIL_USERNAME}>`,
+      subject: "verify token",
       html: `please verify your token here ${link} and this is the token ${token}`,
       context: { email, link },
     });
   }
-  sendResetPsswordToken(email: string, link: string, token: string) {
-    this.mailerService.sendMail({
+  async sendResetPsswordToken(email: string, link: string, token: string) {
+    await this.mailerService.sendMail({
       to: email,
       from: "team managemet community",
-      subject: 'reset Password token',
+      subject: "reset Password token",
       html: `to reset your Password click here ${link} the token: ${token}`,
       context: { email, link },
     });
   }
   generateLink(id: number, service: string) {
-    return `${process.env.host}/${service}/${id}`;
+    return `${process.env.HOST}/auth/${service}/${id}`;
   }
 }

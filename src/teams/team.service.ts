@@ -17,7 +17,7 @@ finding is allowed to all,
 
   async findOneById(id: number) {
     const team = await this.prisma.team.findUnique({
-      where: { id },
+      where: { id , public: true},
       include: { members: true },
     });
     if (!team) {
@@ -28,6 +28,7 @@ finding is allowed to all,
 
   async findAll() {
     const teams = await this.prisma.team.findMany({
+      where: {public: true},
       include: { members: true },
     });
     return teams;
@@ -35,7 +36,7 @@ finding is allowed to all,
 
   async findManyByName(name: string) {
     return this.prisma.team.findMany({
-      where: { name },
+      where: { name, public: true },
       include: { members: true },
     });
   }

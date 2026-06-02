@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { UpdateUser } from "./update-user.dto";
 
@@ -13,10 +17,10 @@ finding is allowed to all,
   async findOneByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email: email },
-    })
+    });
     if (!user) {
       throw new NotFoundException("Invalid email");
-    };
+    }
     return user;
   }
 
@@ -50,5 +54,26 @@ finding is allowed to all,
 
   async deleteUser(id: number) {
     return await this.prisma.user.delete({ where: { id } });
+  }
+  async leaveTeam(teamId: number, userId: number) {
+    return await this.prisma.user.update({
+      where: {
+        id: userId,
+        teamId: teamId,
+      },
+      data: {
+        teamId: null,
+        role: "member",
+      },
+    });
+  }
+  async joinTeam(userId: number, teamId: number) {
+    const team = await this.prisma.team.findUnique({ where: { id: teamId } });
+    if (!team) throw new NotFoundException("this team is not found");
+    if (!team.public) throw new ForbiddenException("this team is private");
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: { teamId },
+    });
   }
 }

@@ -10,12 +10,17 @@ import {
   ParseIntPipe,
   UseGuards,
   Req,
+  Post,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { CurrentUser } from "src/guards/decorators/current-user.decorator";
 import { isOwnUser } from "src/guards/is-own.guard";
+import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
+import { RolesGuard } from "src/guards/auth-roles.guard";
+import { Roles } from "src/guards/decorators/roles.decorator";
 
+@UseGuards(RolesGuard)
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -54,5 +59,17 @@ export class UserController {
   @Delete("/:id")
   deleteUser(@Param("id", ParseIntPipe) id: number) {
     return this.userService.deleteUser(id);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Delete("/leave-team")
+  @Roles(["member", "admin"])
+  leaveTeam(@CurrentUser() user: any, @CurrentTeam() teamId: number) {
+    return this.userService.leaveTeam(teamId, user.id);
+  }
+
+  @Post("/join/:id")
+  @Roles(["member", "admin"])
+  joinTeam(@Param("id", ParseIntPipe) id: number, @CurrentUser() user: any) {
+    return this.userService.joinTeam(user.id, id);
   }
 }

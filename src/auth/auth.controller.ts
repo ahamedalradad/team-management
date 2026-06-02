@@ -9,38 +9,50 @@ import {
   Param,
   Post,
   ParseIntPipe,
+  UseGuards,
 } from "@nestjs/common";
 import { AuthSignInDto, AuthSignUpDto } from "./dtos/auth.dto";
 import { ResetPassword, VerifyToken } from "./dtos/reset-password.dto";
+import { ApiHeader } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { CurrentUser } from "src/guards/decorators/current-user.decorator";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("sign-in")
-  async signIn(@Body() data: AuthSignInDto) {
-    return await this.authService.signIn(data);
+  signIn(@Body() data: AuthSignInDto) {
+    return this.authService.signIn(data);
   }
 
   @Post("sign-up")
-  async signUp(@Body() data: AuthSignUpDto) {
-    return await this.authService.createLink(data);
+  signUp(@Body() data: AuthSignUpDto) {
+    return this.authService.createLink(data);
   }
 
   @Post("verify-email/:id")
-  async verifyEmail(
+  verifyEmail(
     @Param("id", ParseIntPipe) id: number,
     @Headers("token") token: string,
   ) {
-    return await this.authService.createAndVerify(id, Number(token));
+    return this.authService.createAndVerify(id, Number(token));
   }
 
   @Post("reset-password-link")
-  async sendLink(
-    @Body() data: ToAddLinkDto,
-    @Headers("authorization") token: string,
-  ) {
-    return await this.authService.sendLink(data, token);
+  sendLink(@Body() data: ToAddLinkDto) {
+    return this.authService.sendLink(data);
+  }
+
+  @ApiHeader({
+  name: 'authorization',
+  required: true, // <-- This tells Swagger it is optional
+  description: 'Bearer token for authorization',
+})
+  @Post("reset-password-link-signed")
+  @UseGuards(JwtAuthGuard)
+  sendLinkToSigned(@CurrentUser() user: any) {
+    return this.authService.sendLinkToSigned(user.email, user.id);
   }
 
   @Post("verify-reset-password/:id")
@@ -48,14 +60,11 @@ export class AuthController {
     @Param("id", ParseIntPipe) id: number,
     @Body() data: VerifyToken,
   ) {
-    if (id !== data.id) {
-      throw new BadRequestException("user identifiers are not similar");
-    }
-    return await this.authService.verifyToken(data);
+    return await this.authService.verifyToken(data, id);
   }
 
   @Post("reset-password")
-  async resetPassword(@Body() data: ResetPassword) {
-    return await this.authService.resetPassword(data);
+  resetPassword(@Body() data: ResetPassword) {
+    return this.authService.resetPassword(data);
   }
 }

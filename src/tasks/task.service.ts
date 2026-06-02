@@ -9,10 +9,7 @@ import { UpdateTaskDto } from "./dtos/task.update";
 
 @Injectable()
 export class TaskService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
-
+  constructor(private readonly prisma: PrismaService) {}
 
   async findOneById(userId: number, id: number) {
     const task = await this.prisma.task.findUnique({
@@ -30,7 +27,7 @@ export class TaskService {
     });
   }
 
-  async findManyByName(name: string,userId: number) {
+  async findManyByName(name: string, userId: number) {
     return await this.prisma.task.findMany({
       where: { name, participateds: { some: { id: userId } } },
     });
@@ -44,7 +41,7 @@ export class TaskService {
 
   async createTask(data: CreateTaskDto, teamId: number) {
     data.teamId = teamId;
-    data.active = true
+    data.active = true;
     return await this.prisma.task.create({ data });
   }
 
@@ -74,9 +71,10 @@ export class TaskService {
 
   async removeMembersfromTask(
     taskId: number,
-teamId: number,   usersId: number[],
+    teamId: number,
+    usersId: number[],
   ) {
-  const task = await this.prisma.task.findUnique({
+    const task = await this.prisma.task.findUnique({
       where: { id: taskId },
       include: { participateds: true },
     });
@@ -125,6 +123,6 @@ teamId: number,   usersId: number[],
   }
 
   async deleteTask(id: number, teamId: number) {
-    return await this.prisma.task.delete({ where: { id,  teamId} });
+    return await this.prisma.task.delete({ where: { id, teamId } });
   }
 }

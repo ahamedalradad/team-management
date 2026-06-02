@@ -10,6 +10,7 @@ model Team {
   id         Int      @id @default(autoincrement())
   name       String   @unique
   profile    String   @default("images/team-profile/profile.jpg")
+  public     Boolean  @default(true)
   
   members     User[]  @relation("TeamMembers")
   tasks      Task[]   @relation("TeamTasks")
@@ -25,7 +26,7 @@ model User {
   password       String
   role           String          @default("member") 
   profile        String          @default("images/user-profile/profile.jpg")
-  skills         Json 
+  skills         Json? 
   
   teamId         Int?
   team           Team?           @relation("TeamMembers", fields: [teamId], references: [id])
@@ -51,7 +52,7 @@ model Verification {
 model ResetPassword {
   id                 Int      @id @default(autoincrement())
   allowed            Boolean  @default(false)
-  resetPasswordToken String   @unique
+  resetPasswordToken String?   @unique
   userId             Int
   user               User     @relation("UserResetPassword", fields: [userId], references: [id], onDelete: Cascade)
 }

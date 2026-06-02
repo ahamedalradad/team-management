@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Team` MODIFY `public` BOOLEAN NOT NULL DEFAULT true;

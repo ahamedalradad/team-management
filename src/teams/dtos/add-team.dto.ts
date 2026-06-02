@@ -7,4 +7,7 @@ export class CreateTeamDto {
   @IsOptional()
   @IsString()
   profile?: string;
+  @IsOptional()
+  @IsString()
+  public!: boolean;
 }
