@@ -6,12 +6,10 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { Roles } from "./decorators/roles.decorator";
+import { Roles } from "../decorators/roles.decorator";
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private readonly reflector: Reflector,
-) {}
+  constructor(private readonly reflector: Reflector) {}
   async canActivate(context: ExecutionContext) {
     const roles = this.reflector.getAllAndOverride<string[]>(Roles, [
       context.getHandler(),

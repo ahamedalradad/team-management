@@ -13,10 +13,10 @@ import {
 } from "@nestjs/common";
 import { TeamService } from "./team.service";
 import { isOwnTeam } from "src/guards/is-own.guard";
-import { Roles } from "src/guards/decorators/roles.decorator";
+import { Roles } from "src/decorators/roles.decorator";
 import { CreateTeamDto } from "./dtos/add-team.dto";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
+import { CurrentTeam } from "src/decorators/current-team.decorator";
 import { RolesGuard } from "src/guards/auth-roles.guard";
 
 @Controller("teams")

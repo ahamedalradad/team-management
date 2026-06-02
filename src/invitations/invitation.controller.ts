@@ -11,23 +11,20 @@ import {
 import { InvitationService } from "./invitation.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { RolesGuard } from "src/guards/auth-roles.guard";
-import { Roles } from "src/guards/decorators/roles.decorator";
-import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
-import { CurrentUser } from "src/guards/decorators/current-user.decorator";
+import { Roles } from "src/decorators/roles.decorator";
+import { CurrentTeam } from "src/decorators/current-team.decorator";
+import { CurrentUser } from "src/decorators/current-user.decorator";
 import { CreateInvitationDto } from "./dtos/create-invitation.dto";
 
 @Controller("invitations")
-@UseGuards(JwtAuthGuard) 
+@UseGuards(JwtAuthGuard)
 export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 
   @Post("/send")
   @Roles(["owner", "admin"])
   @UseGuards(RolesGuard)
-  sendInvitation(
-    @Body() dto: CreateInvitationDto,
-    @CurrentTeam() team: any,
-  ) {
+  sendInvitation(@Body() dto: CreateInvitationDto, @CurrentTeam() team: any) {
     const teamId = team.id || team;
     return this.invitationService.sendInvitation(dto, teamId);
   }

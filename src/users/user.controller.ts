@@ -14,11 +14,11 @@ import {
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { CurrentUser } from "src/guards/decorators/current-user.decorator";
+import { CurrentUser } from "src/decorators/current-user.decorator";
 import { isOwnUser } from "src/guards/is-own.guard";
-import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
+import { CurrentTeam } from "src/decorators/current-team.decorator";
 import { RolesGuard } from "src/guards/auth-roles.guard";
-import { Roles } from "src/guards/decorators/roles.decorator";
+import { Roles } from "src/decorators/roles.decorator";
 
 @UseGuards(RolesGuard)
 @Controller("users")

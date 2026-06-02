@@ -1,4 +1,4 @@
-import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
+import { CurrentTeam } from "src/decorators/current-team.decorator";
 import { MemberService } from "./member.service";
 import {
   Body,
@@ -14,7 +14,7 @@ import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { isOwnTeam } from "src/guards/is-own.guard";
 import { UpdateMemberDto } from "./dtos/update-member.dto";
 import { RolesGuard } from "src/guards/auth-roles.guard";
-import { Roles } from "src/guards/decorators/roles.decorator";
+import { Roles } from "src/decorators/roles.decorator";
 
 @Controller("memebers")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,7 +49,10 @@ export class MemberController {
   @Delete("/:teamId")
   @Roles(["owner", "admin"])
   @UseGuards(isOwnTeam)
-  deleteMembers(@Param("teamId", ParseIntPipe) teamId: number, @Body() id: number[]) {
+  deleteMembers(
+    @Param("teamId", ParseIntPipe) teamId: number,
+    @Body() id: number[],
+  ) {
     return this.memberService.deleteMembers(id, teamId);
   }
 }

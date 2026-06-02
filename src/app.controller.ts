@@ -1,13 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from "@nestjs/common";
+import { SkipJsend } from "./decorators/skip-jsend.decorator";
 
 @Controller()
 export class AppController {
-  
   @Get()
+  @SkipJsend()
   getSystemStatus(): string {
     // جلب بعض البيانات الحيوية للسيرفر ديناميكياً
     const nodeVersion = process.version;
-    const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+    const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
+      2,
+    );
     const uptime = (process.uptime() / 60).toFixed(2);
 
     return `

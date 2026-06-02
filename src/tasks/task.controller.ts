@@ -13,10 +13,10 @@ import { TaskService } from "./task.service";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 import { RolesGuard } from "src/guards/auth-roles.guard";
 import { isOwnTeam, isOwnUser } from "src/guards/is-own.guard";
-import { CurrentUser } from "src/guards/decorators/current-user.decorator";
+import { CurrentUser } from "src/decorators/current-user.decorator";
 import { CreateTaskDto } from "./dtos/task.create";
-import { Roles } from "src/guards/decorators/roles.decorator";
-import { CurrentTeam } from "src/guards/decorators/current-team.decorator";
+import { Roles } from "src/decorators/roles.decorator";
+import { CurrentTeam } from "src/decorators/current-team.decorator";
 import { UpdateTaskDto } from "./dtos/task.update";
 
 @Controller("task")

@@ -15,7 +15,7 @@ import { AuthSignInDto, AuthSignUpDto } from "./dtos/auth.dto";
 import { ResetPassword, VerifyToken } from "./dtos/reset-password.dto";
 import { ApiHeader } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { CurrentUser } from "src/guards/decorators/current-user.decorator";
+import { CurrentUser } from "src/decorators/current-user.decorator";
 
 @Controller("auth")
 export class AuthController {
@@ -45,10 +45,10 @@ export class AuthController {
   }
 
   @ApiHeader({
-  name: 'authorization',
-  required: true, // <-- This tells Swagger it is optional
-  description: 'Bearer token for authorization',
-})
+    name: "authorization",
+    required: true, // <-- This tells Swagger it is optional
+    description: "Bearer token for authorization",
+  })
   @Post("reset-password-link-signed")
   @UseGuards(JwtAuthGuard)
   sendLinkToSigned(@CurrentUser() user: any) {
