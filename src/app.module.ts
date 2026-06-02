@@ -9,6 +9,7 @@ import { TaskModule } from "./tasks/task.module";
 import { MemberModule } from "./members/member.module";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { InvitationModule } from "./invitations/invitation.module";
+import { AppController } from "./app.controller";
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -34,5 +35,6 @@ import { InvitationModule } from "./invitations/invitation.module";
     MemberModule,
     InvitationModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
