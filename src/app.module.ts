@@ -10,6 +10,8 @@ import { MemberModule } from "./members/member.module";
 import { ThrottlerModule } from "@nestjs/throttler";
 import { InvitationModule } from "./invitations/invitation.module";
 import { AppController } from "./app.controller";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { JsendInterceptor } from "./interceptors/Jsend.interceptor";
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -36,5 +38,6 @@ import { AppController } from "./app.controller";
     InvitationModule,
   ],
   controllers: [AppController],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: JsendInterceptor }],
 })
 export class AppModule {}

@@ -1,6 +1,7 @@
 import { CurrentTeam } from "src/decorators/current-team.decorator";
 import { MemberService } from "./member.service";
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -15,44 +16,64 @@ import { isOwnTeam } from "src/guards/is-own.guard";
 import { UpdateMemberDto } from "./dtos/update-member.dto";
 import { RolesGuard } from "src/guards/auth-roles.guard";
 import { Roles } from "src/decorators/roles.decorator";
+import { ApiHeader, ApiOperation, ApiParam } from "@nestjs/swagger";
 
 @Controller("memebers")
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
-  @Get("/:teamId")
-  findAll(@Param("teamId", ParseIntPipe) teamId: number) {
-    return this.memberService.findAll(teamId);
-  }
-  @Get("/:teamId/:name")
-  findByName(
-    @Param("teamId", ParseIntPipe) teamId: number,
-    @Param("name") name: string,
-  ) {
-    return this.memberService.findManyByName(name, teamId);
-  }
   @UseGuards(isOwnTeam)
-  @Get()
-  getCurrentTeamMembers(@CurrentTeam() user: any) {
-    return this.memberService.getCurrentTeamMembers(user.teamId);
-  }
-  @UseGuards(isOwnTeam)
-  @Roles(["owner", "admin"])
-  @Patch("/:teamId/:id")
+  @Roles(["owner"])
+  @Patch("/:teamId/:userId")
+  @ApiHeader({
+    name: "authorization",
+    required: true,
+    description: "access token (JWT Token)",
+  })
+  @ApiParam({
+    name: "userId",
+    required: true,
+    description: "the ID of user that you want promote or reduce it ",
+  })
+  @ApiParam({
+    name: "teamId",
+    required: true,
+    description: "the ID of team the user in it",
+  })
+  @ApiOperation({ description: "promote or reduce user" })
   updateMember(
     @Param("id", ParseIntPipe) id: number,
     @Body() data: UpdateMemberDto,
     @Param("teamId", ParseIntPipe) teamId: number,
+    @CurrentTeam() teamUserId: number,
   ) {
-    return this.memberService.updateMember(teamId, id, data);
+    if (teamUserId !== teamId) {
+      throw new BadRequestException("your team id is not same team id");
+    }
+    return this.memberService.updateMember(teamUserId, id, data);
   }
   @Delete("/:teamId")
   @Roles(["owner", "admin"])
   @UseGuards(isOwnTeam)
+  @ApiHeader({
+    name: "authorization",
+    required: true,
+    description: "access token (JWT Token)",
+  })
+  @ApiParam({
+    name: "teamId",
+    required: true,
+    description: "the ID of team the user in it",
+  })
+  @ApiOperation({ description: "delete user" })
   deleteMembers(
     @Param("teamId", ParseIntPipe) teamId: number,
     @Body() id: number[],
+    @CurrentTeam() teamUserId: number,
   ) {
-    return this.memberService.deleteMembers(id, teamId);
+    if (teamUserId !== teamId) {
+      throw new BadRequestException("your team is not same team id");
+    }
+    return this.memberService.deleteMembers(id, teamUserId);
   }
 }

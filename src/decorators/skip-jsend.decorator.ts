@@ -1,7 +1,2 @@
-import { SetMetadata } from '@nestjs/common';
-
-// المفتاح المعياري للـ Metadata
-export const SKIP_JSEND_KEY = 'skipJsend';
-
-// دالة الـ Decorator التي سنضعها فوق المسارات المستثناة
-export const SkipJsend = () => SetMetadata(SKIP_JSEND_KEY, true);
+import { Reflector } from "@nestjs/core";
+export const SkipJsend = Reflector.createDecorator<boolean>();

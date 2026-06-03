@@ -6,9 +6,7 @@ import { CreateTeamDto } from "./dtos/add-team.dto";
 
 @Injectable()
 export class TeamService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
   /* 
  this is for finding teams,
 finding is allowed to all, 
@@ -17,7 +15,7 @@ finding is allowed to all,
 
   async findOneById(id: number) {
     const team = await this.prisma.team.findUnique({
-      where: { id , public: true},
+      where: { id, public: true },
       include: { members: true },
     });
     if (!team) {
@@ -26,10 +24,12 @@ finding is allowed to all,
     return team;
   }
 
-  async findAll() {
+  async findAll(pageSize: number, page: number) {
+    const skip = (page - 1) * pageSize;
     const teams = await this.prisma.team.findMany({
-      where: {public: true},
-      include: { members: true },
+      where: { public: true },
+      skip,
+      take: pageSize,
     });
     return teams;
   }

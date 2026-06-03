@@ -21,9 +21,12 @@ export class TaskService {
     return task;
   }
 
-  async findAll(userId: number) {
+  async findAll(userId: number, pageSize: number, page: number) {
+    const skip = (page - 1) * pageSize;
     return await this.prisma.task.findMany({
       where: { participateds: { some: { id: userId } } },
+      skip,
+      take: pageSize,
     });
   }
 

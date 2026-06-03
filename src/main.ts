@@ -14,12 +14,23 @@ async function bootstrap() {
     .addTag("team management")
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, documentFactory);
+  SwaggerModule.setup("/api", app, documentFactory);
   SwaggerModule.setup("swagger", app, documentFactory, {
     jsonDocumentUrl: "swagger/json",
   });
-  app.use(helmet());
-  app.useGlobalInterceptors(new JsendInterceptor());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", "data:", "https:"],
+          fontSrc: ["'self'", "https:", "data:"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+        },
+      },
+    }),
+  );
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { UpdateUser } from "./update-user.dto";
+import { UpdateUser } from "./dtos/update-user.dto";
 
 @Injectable()
 export class UserService {
@@ -32,13 +32,16 @@ finding is allowed to all,
     return user;
   }
 
-  async findAll() {
-    const users = await this.prisma.user.findMany();
+  async findAll(pageSize: number, page: number) {
+    const skip = (page - 1) * pageSize;
+    const users = await this.prisma.user.findMany({ skip, take: pageSize });
     return users;
   }
 
   async findManyByName(name: string) {
-    return this.prisma.user.findMany({ where: { name } });
+    return this.prisma.user.findMany({
+      where: { name: name.toLocaleLowerCase().trim() },
+    });
   }
   /* 
  this is for user management,

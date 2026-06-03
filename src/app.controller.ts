@@ -4,9 +4,8 @@ import { SkipJsend } from "./decorators/skip-jsend.decorator";
 @Controller()
 export class AppController {
   @Get()
-  @SkipJsend()
+  @SkipJsend(true)
   getSystemStatus(): string {
-    // جلب بعض البيانات الحيوية للسيرفر ديناميكياً
     const nodeVersion = process.version;
     const memoryUsage = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
       2,
